@@ -9,6 +9,34 @@
 #include <magick/api.h>
 #include <iostream>
 using namespace std;
+/**
+ * 设置图片透明度
+ * */
+MagickPassFail dissolveImage(Image *image,int dissolve){
+    int y, x;
+    register PixelPacket
+        *q;
+    if (!image->matte)
+        SetImageOpacity(image,OpaqueOpacity);
+
+    for (y=0; y < (long) image->rows; y++)
+    {
+        q=GetImagePixels(image,0,y,image->columns,1);
+        if (q == (PixelPacket *) NULL)
+            break;
+        for (x=0; x < (long) image->columns; x++)
+        {
+            q->opacity=(Quantum)
+                ((((unsigned long) MaxRGB-q->opacity)*dissolve)/100.0);
+            q++;
+        }
+        if (!SyncImagePixels(image)){
+            return MagickFail;
+        }
+    }
+    return MagickPass;
+}
+
 int main ( int argc, char **argv )
 {
     Image
@@ -62,18 +90,21 @@ int main ( int argc, char **argv )
         goto program_exit;
     }
 
-    //获取图片基本信息
-    /*  cout << "image Type:" << canvas_image->magick << endl;
-        cout << "image width:" << canvas_image->columns << endl;
-        cout << "image height:" << canvas_image->rows << endl;
-        cout << "Image colorspace:" << canvas_image->colorspace << endl;
-        */
+    //水印图位置
     xoffset = long(canvas_image->columns*3.0/4);
     yoffset = long(canvas_image->rows*3.0/4);
 
     //读入水印图
     (void) strcpy(imageInfo->filename, compositeimage);
     if((Image *)NULL ==  (composite_image = ReadImage(imageInfo, &exception))) {
+        CatchException(&exception);
+        exit_status = 1;
+        goto program_exit;
+    }
+ 
+    //设置水印透明度，disslove在0-100之间
+    pass = dissolveImage(composite_image,70);
+    if (pass == MagickFail) {
         CatchException(&exception);
         exit_status = 1;
         goto program_exit;
@@ -93,8 +124,7 @@ int main ( int argc, char **argv )
         exit_status = 1;
         goto program_exit;
     }
-
-
+    printf("success\n");
 program_exit:
 
     if (canvas_image != (Image *) NULL)
