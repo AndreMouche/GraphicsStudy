@@ -7,6 +7,8 @@
 #include <time.h>
 #include <sys/types.h>
 #include <magick/api.h>
+#include <iostream>
+using namespace std;
 
 int main ( int argc, char **argv )
 {
@@ -53,13 +55,20 @@ int main ( int argc, char **argv )
     }
 
     (void) strcpy(image->filename, outfile);
-    if (!WriteImage (imageInfo,image))
-        //if (!WriteWEBPImage(imageInfo,image)
-    {
+
+    //设置图片渐进方式，
+    // 其中参数[PartitionInterlace,PlaneInterlace]未实现，
+    // NoneInterlace为关闭渐进方式，目前仅LineInterlace可用
+    imageInfo->interlace = LineInterlace;
+    
+    //保存图片
+    if (!WriteImage (imageInfo,image)) {
         CatchException(&image->exception);
         exit_status = 1;
         goto program_exit;
     }
+
+    //cout << "interlace:" << image->interlace << endl;
 
 program_exit:
 
