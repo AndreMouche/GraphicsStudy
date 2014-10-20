@@ -1,6 +1,6 @@
 /*
- * build g++ convert.cpp `GraphicsMagick-config --cppflags --ldflags --libs`
- * */
+ *  * build g++ convert.cpp `GraphicsMagick-config --cppflags --ldflags --libs`
+ *   * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +16,8 @@ int main ( int argc, char **argv )
     char
         infile[MaxTextExtent],
         outfile[MaxTextExtent],
-        annotateText[100] = "HelloWorld",
-        gemery[100]="+10+10",
+        annotateText[100] = "NOS",
+        gemery[100]="+100+100", //所占几何图的长款
         fontFile[MaxTextExtent]= "./simsun.ttc";
 
     int
@@ -58,17 +58,20 @@ int main ( int argc, char **argv )
     }
 
     drawInfo->font = (char*)fontFile;
-    drawInfo->pointsize = 15;
-    drawInfo->gravity = SouthEastGravity;
-    drawInfo->stroke.opacity = (Quantum) (((double) MaxRGB*(1.0 - 0.0))+0.5);
-    drawInfo->opacity = (Quantum) (((double) MaxRGB*(1.0 - 0.0))+0.5);
+    drawInfo->pointsize = 195;
+    drawInfo->gravity = CenterGravity;//位置：SouthEastGravity;
     drawInfo->stroke_antialias = 1;
     drawInfo->text_antialias = 1;
-    drawInfo->weight = 100;
+    drawInfo->weight = 80;
     drawInfo->geometry = gemery;
 
-    QueryColorDatabase("#000000", &(drawInfo->fill), &exception);
+    QueryColorDatabase("#FF3333", &(drawInfo->fill), &exception);
+ //   drawInfo->fill.opacity = (Quantum)((double) MaxRGB * 0.5); //字目所在矩形的填充透明度
+    //   drawInfo->undercolor.opacity = (Quantum)((double)MaxRGB*0.5); //几何填充透明度
+   
+    drawInfo->stroke.opacity = (Quantum) (((double) MaxRGB*(1.0 - 0.0)) * 0.5);
     drawInfo->text = (char*)annotateText;
+    drawInfo->opacity = (Quantum) (((double) MaxRGB*(1.0 - 0.0)) * 0.0);
     (void) strcpy(imageInfo->filename, infile);
     image = ReadImage(imageInfo, &exception);
     if (image == (Image *) NULL)
@@ -83,7 +86,6 @@ int main ( int argc, char **argv )
     printf("finish annotate\n");
     (void) strcpy(image->filename, outfile);
     if (!WriteImage (imageInfo,image))
-        //if (!WriteWEBPImage(imageInfo,image)
     {
         CatchException(&image->exception);
         exit_status = 1;
@@ -103,3 +105,4 @@ program_exit:
 
     return exit_status;
 }
+
