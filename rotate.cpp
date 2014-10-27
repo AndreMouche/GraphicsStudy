@@ -58,7 +58,7 @@ int main ( int argc, char **argv )
     }
 
     (void) strcpy(image->filename, outfile);
-    image->background_color= background_color; //转完后的图片空白部分颜色
+//   image->background_color= background_color; //转完后的图片空白部分颜色
     //Rotate image 
     image = RotateImage(image,degree,&exception);   
  
