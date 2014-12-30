@@ -113,7 +113,7 @@ bool DrawText(Image *& image, const char * text, const double font_pointsize,con
     draw_context = DrawAllocateContext((DrawInfo*)NULL, image);
     DrawSetFillColorString(draw_context, fill_color);
 
-    DrawSetTextAntialias(draw_context, 0);
+    DrawSetTextAntialias(draw_context, 1);
     DrawSetFont(draw_context, FONT_DEFAULT);
     DrawSetFontSize(draw_context, font_pointsize);
     DrawSetGravity(draw_context, CenterGravity);
