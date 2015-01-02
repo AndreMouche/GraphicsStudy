@@ -108,7 +108,8 @@ bool DrawText(Image *& image, const char * text, const double font_pointsize,con
 {
     cout << "text:" << text << endl;
     cout << "color:" << fill_color << endl;
-
+    cout << "fontsize:" << font_pointsize << endl;
+    cout << "text length:" << strlen(text) << endl;
     DrawContext draw_context;
     draw_context = DrawAllocateContext((DrawInfo*)NULL, image);
     DrawSetFillColorString(draw_context, fill_color);
@@ -158,7 +159,10 @@ Image * GetTextDraw(Image *image, const char * text,
 {
     Image  *maskImg = (Image *) NULL;
     Image  *textImg = NULL;
-    if(!constituteNewImage(maskImg, image->columns, image->rows)) {   
+    int rows = font_pointsize;
+    int columns = font_pointsize*strlen(text)/2+1;
+    cout << "rows:" << rows << ",columns:" << columns << endl;
+    if(!constituteNewImage(maskImg, columns, rows)) {   
         cout << "ConstituteNewImage maskImg failed" << endl;
         goto ERROR_HANDLE;
     }
