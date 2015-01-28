@@ -84,10 +84,17 @@ Image * trimImage(Image *& image){
         }
     }
     cout << "sx:" << sx << ",sy:" << sy << ",ex:" << ex << ",ey:" << ey << endl;
-    rect.x = sx;
-    rect.y = sy;
-    rect.width = ex - sx;
-    rect.height = ey - sy;
+    if(sx >= ex || sy >= ey) { // Too small
+        rect.x = 0;
+        rect.y = 0;
+        rect.width = image->columns;
+        rect.height = image->rows;
+    } else {
+        rect.x = sx;
+        rect.y = sy;
+        rect.width = ex - sx + 1;
+        rect.height = ey - sy + 1;
+    }
     cout << "x:" << rect.x << ",y:" << rect.y << ",rect.width:" << rect.width << ",rect.height:" << rect.height << endl;
     Image *cImage = CropImage(image, &rect, &exception);
     cout << "cImage clomnes:" << cImage->columns << ",rows:" << cImage->rows << endl;
@@ -378,11 +385,12 @@ int main ( int argc, char **argv )
         goto program_exit;
     }
  
-    if(!DrawTextTransparent(image,"您好, World!",200,"white",SouthEastGravity,50,30,0)) {
+    if(!DrawTextTransparent(image,"您好, World!",200,"red",SouthEastGravity,50,30,0)) {
        goto program_exit;
     }
 
 
+    imageInfo->quality = 100;
     (void) strcpy(image->filename, outfile);
 
     
